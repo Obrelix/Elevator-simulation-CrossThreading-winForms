@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Elevator
 {
-    class Building
+    public class Building
     {
 
 
         public List<Person> floor0List = new List<Person>();
+
+        public List<Person> exitList = new List<Person>();
 
         public List<Person> floor1List = new List<Person>();
 
@@ -41,17 +44,19 @@ namespace Elevator
         }
         public bool stop = false;
         private Thread Runner;
-        private int maxPeople = 6;
+        private int elevatorCapacity = 5;
+        private const int maxPeople = 50;
+        private int peopleCounter = 0;
         public Lifter lifter;
         private frmMain parentForm;
 
         public Building(frmMain Form)
         {
             this.parentForm = Form;
-            lifter = new Lifter(parentForm);
+            lifter = new Lifter(parentForm, this);
             // /*for (int i = 0; i < maxPeople; i++) */floor0List.Add(new Person(maxFloor, 1, lifter, parentForm));
-            for (int i = 0; i < maxPeople; i++)
-                floor0List.Add(new Person(maxFloor,i + 1, lifter, parentForm));
+            //for (int i = 0; i < elevatorCapacity + 15; i++)
+            //    floor0List.Add(new Person(maxFloor,i + 1, lifter, parentForm));
 
             parentForm.updateFloors(floor0List, 0);
 
@@ -71,24 +76,38 @@ namespace Elevator
         {
             while (!stop)
             {
-                if(lifter.direction == Direction.Stop)
-                switch (lifter.floor)
+                if(peopleCounter< maxPeople && getRandomNumber(0, 101) > 97)
+                    floor0List.Add(new Person(maxFloor, ++peopleCounter , lifter, parentForm));
+
+                if (!lifter.doorClosed)
                 {
-                    case 0:
+                    
+                    switch (lifter.floor)
+                    {
+                        case 0:
                             if (lifter.lifterList.Count > 0)
                             {
-                                for(int i = 0; i < lifter.lifterList.Count; i++)
+                                for (int i = lifter.lifterList.Count - 1; i >= 0; i--)
                                 {
-                                    lifter.lifterList[i].finished = true;
-                                    lifter.lifterList.RemoveAt(i);
-                                    parentForm.updateElevator(lifter.lifterList);
+                                    if (lifter.lifterList[i].nextFloor == 0)
+                                    {
+                                        Thread.Sleep(400);
+                                        lifter.lifterList[i].Reset();
+                                        exitList.Add(lifter.lifterList[i]);
+                                        parentForm.updateExit(exitList);
+                                        lifter.lifterList.RemoveAt(i);
+                                        parentForm.updateElevator(lifter.lifterList);
+                                        lifter.callElevator(lifter.floor);
+                                    }
                                 }
 
                             }
-                            for(int i = 0; i < floor0List.Count; i++)
+                            for (int i = floor0List.Count - 1; i >= 0; i--)
                             {
-                                if (lifter.lifterList.Count < 6 && floor0List[i].inQueue)
+                                if (lifter.lifterList.Count < elevatorCapacity)
                                 {
+                                    Thread.Sleep(400);
+                                    floor0List[i].setFloor(lifter.floor, true);
                                     lifter.addPerson(floor0List[i]);
                                     parentForm.updateElevator(lifter.lifterList);
                                     floor0List.RemoveAt(i);
@@ -98,169 +117,78 @@ namespace Elevator
                             lifter.doorClosed = true;
                             break;
 
-                    case 1:
-                            for(int i = 0; i < lifter.lifterList.Count; i++)
-                            {
-                                if(lifter.lifterList[i].nextFloor == lifter.floor)
-                                {
-                                    lifter.lifterList[i].floor = lifter.floor;
-                                    floor1List.Add(lifter.lifterList[i]);
-
-                                    parentForm.updateFloors(floor1List, lifter.floor);
-                                    lifter.lifterList.RemoveAt(i);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                }    
-                            }
-                            for(int i =0; i < floor1List.Count; i++)
-                            {
-                                if(floor1List[i].inQueue && lifter.lifterList.Count < 6 )
-                                        //&& floor1List[i].direction == lifter.nextDirection)
-                                {
-                                    lifter.addPerson(floor1List[i]);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                    floor1List.RemoveAt(i);
-                                    parentForm.updateFloors(floor1List, lifter.floor);
-                                }
-                            }
-                            lifter.doorClosed = true;
-                            break;
-                    case 2:
-                            for (int i = 0; i < lifter.lifterList.Count; i++)
-                            {
-                                if (lifter.lifterList[i].nextFloor == lifter.floor)
-                                {
-                                    lifter.lifterList[i].floor = lifter.floor;
-                                    floor2List.Add(lifter.lifterList[i]);
-
-                                    parentForm.updateFloors(floor2List, lifter.floor);
-                                    lifter.lifterList.RemoveAt(i);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                }
-                            }
-                            for (int i = 0; i < floor2List.Count; i++)
-                            {
-                                if (floor2List[i].inQueue && lifter.lifterList.Count < 6)
-                                        //&& floor2List[i].direction == lifter.nextDirection)
-                                {
-                                    lifter.addPerson(floor2List[i]);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                    floor2List.RemoveAt(i);
-                                    parentForm.updateFloors(floor2List, lifter.floor);
-                                }
-                            }
-                            lifter.doorClosed = true;
-                            break;
-                    case 3:
-                            for (int i = 0; i < lifter.lifterList.Count; i++)
-                            {
-                                if (lifter.lifterList[i].nextFloor == lifter.floor)
-                                {
-                                    lifter.lifterList[i].floor = lifter.floor;
-                                    floor3List.Add(lifter.lifterList[i]);
-
-                                    parentForm.updateFloors(floor3List, lifter.floor);
-                                    lifter.lifterList.RemoveAt(i);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                }
-                            }
-                            for (int i = 0; i < floor3List.Count; i++)
-                            {
-                                if (floor3List[i].inQueue && lifter.lifterList.Count < 6)
-                                        //&& floor3List[i].direction == lifter.nextDirection)
-                                {
-                                    lifter.addPerson(floor3List[i]);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                    floor3List.RemoveAt(i);
-                                    parentForm.updateFloors(floor3List, lifter.floor);
-                                }
-                            }
-                            lifter.doorClosed = true;
-                            break;
-                    case 4:
-                            for (int i = 0; i < lifter.lifterList.Count; i++)
-                            {
-                                if (lifter.lifterList[i].nextFloor == lifter.floor)
-                                {
-                                    lifter.lifterList[i].floor = lifter.floor;
-                                    floor4List.Add(lifter.lifterList[i]);
-
-                                    parentForm.updateFloors(floor4List, lifter.floor);
-                                    lifter.lifterList.RemoveAt(i);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                }
-                            }
-                            for (int i = 0; i < floor4List.Count; i++)
-                            {
-                                if (floor4List[i].inQueue && lifter.lifterList.Count < 6)
-                                        //&& floor4List[i].direction == lifter.nextDirection)
-                                {
-                                    lifter.addPerson(floor4List[i]);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                    floor4List.RemoveAt(i);
-                                    parentForm.updateFloors(floor4List, lifter.floor);
-                                }
-                            }
-                            lifter.doorClosed = true;
-                            break;
-                    case 5:
-                            for (int i = 0; i < lifter.lifterList.Count; i++)
-                            {
-                                if (lifter.lifterList[i].nextFloor == lifter.floor)
-                                {
-                                    lifter.lifterList[i].floor = lifter.floor;
-                                    floor5List.Add(lifter.lifterList[i]);
-
-                                    parentForm.updateFloors(floor5List, lifter.floor);
-                                    lifter.lifterList.RemoveAt(i);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                }
-                            }
-                            for (int i = 0; i < floor5List.Count; i++)
-                            {
-                                if (floor5List[i].inQueue && lifter.lifterList.Count < 6)
-                                        //&& floor5List[i].direction == lifter.nextDirection)
-                                {
-                                    lifter.addPerson(floor5List[i]);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                    floor5List.RemoveAt(i);
-                                    parentForm.updateFloors(floor5List, lifter.floor);
-                                }
-                            }
-                            lifter.doorClosed = true;
-                            break;
-                    case 6:
-                            for (int i = 0; i < lifter.lifterList.Count; i++)
-                            {
-                                if (lifter.lifterList[i].nextFloor == lifter.floor)
-                                {
-                                    lifter.lifterList[i].floor = lifter.floor;
-                                    floor6List.Add(lifter.lifterList[i]);
-
-                                    parentForm.updateFloors(floor6List, lifter.floor);
-                                    lifter.lifterList.RemoveAt(i);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                }
-                            }
-                            for (int i = 0; i < floor6List.Count; i++)
-                            {
-                                if (floor6List[i].inQueue && lifter.lifterList.Count < 6)
-                                        //&& floor6List[i].direction == lifter.nextDirection)
-                                {
-                                    lifter.addPerson(floor6List[i]);
-                                    parentForm.updateElevator(lifter.lifterList);
-                                    floor6List.RemoveAt(i);
-                                    parentForm.updateFloors(floor6List, lifter.floor);
-                                }
-                            }
-                            lifter.doorClosed = true;
-                            break;
-                    default:
-                        break;
+                        case 1: floor1List = updateUI(floor1List, false); break;
+                        case 2: floor2List = updateUI(floor2List, false); break;
+                        case 3: floor3List = updateUI(floor3List, false); break;
+                        case 4: floor4List = updateUI(floor4List, false); break;
+                        case 5: floor5List = updateUI(floor5List, false); break;
+                        case 6: floor6List = updateUI(floor6List, true); break;
+                        default: break;
+                    }
                 }
-
-                Thread.Sleep(10);
+                
+                parentForm.updateExit(exitList);
+                parentForm.updateElevator(lifter.lifterList);
+                parentForm.updateFloors(floor0List, 0);
+                parentForm.updateFloors(floor1List, 1);
+                parentForm.updateFloors(floor2List, 2);
+                parentForm.updateFloors(floor3List, 3);
+                parentForm.updateFloors(floor4List, 4);
+                parentForm.updateFloors(floor5List, 5);
+                parentForm.updateFloors(floor6List, 6);
+                Thread.Sleep(100);
                 
             }
+
+        }
+
+        private List<Person> updateUI(List<Person> pList, bool edgeFloor)
+        {
+            List<Person> personList = pList;
+            for (int i = lifter.lifterList.Count - 1; i >= 0; i--)
+            {
+                if (lifter.lifterList[i].nextFloor == lifter.floor)
+                {
+                    Thread.Sleep(400);
+                    lifter.lifterList[i].setFloor(lifter.floor, false);
+                    personList.Add(lifter.lifterList[i]);
+                    parentForm.updateFloors(personList, lifter.floor);
+                    lifter.lifterList.RemoveAt(i);
+                    parentForm.updateElevator(lifter.lifterList);
+                    lifter.callElevator(lifter.floor);
+                }
+            }
+
+            bool empty = (lifter.lifterList.Count == 0);
+            for (int i = personList.Count - 1; i >= 0; i--)
+            {
+                if (personList[i].inQueue && lifter.lifterList.Count < elevatorCapacity
+                        && ((personList[i].direction == lifter.previousDirection || empty) || edgeFloor))
+                {
+                    Thread.Sleep(400);
+                    personList[i].setFloor(lifter.floor, true);
+                    lifter.addPerson(personList[i]);
+                    parentForm.updateElevator(lifter.lifterList);
+                    personList.RemoveAt(i);
+                    parentForm.updateFloors(personList, lifter.floor);
+                }
+            }
+            lifter.doorClosed = true;
+            return personList;
+        }
+
+
+        private int getRandomNumber(int start, int end)
+        {
+            int randomInitValue;
+            using (RNGCryptoServiceProvider rg = new RNGCryptoServiceProvider())
+            {
+                byte[] rno = new byte[5];
+                rg.GetBytes(rno);
+                randomInitValue = BitConverter.ToInt32(rno, 0);
+            }
+            Random rnd = new Random(randomInitValue);
+            return rnd.Next(start, end);
         }
     }
 }

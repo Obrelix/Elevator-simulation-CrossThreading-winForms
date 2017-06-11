@@ -18,9 +18,8 @@ namespace Elevator
     {
 
         public int floor { get; private set; }
-        public int nextStop { get; private set; }
         public Direction direction { get; private set; }
-        public Direction nextDirection { get; private set; }
+        public Direction previousDirection { get; private set; }
 
         public List<Person> lifterList = new List<Person>();
         public Thread lifterRunner;
@@ -28,14 +27,17 @@ namespace Elevator
         public bool alive { get; set; }
         public bool doorClosed { get; set; }
         private frmMain parentForm;
+        private Building building;
+        private int callingFloor;
+        private bool canCall = true;
 
-        public Lifter(frmMain parentForm)
+        public Lifter(frmMain parentForm, Building build)
         {
+            this.building = build;
             this.parentForm = parentForm;
             alive = true;
             doorClosed = false;
             floor = 0;
-            nextStop = 0;
             direction = Direction.Stop;
             lifterRunner = new Thread(new ThreadStart(runner));
             lifterRunner.IsBackground = true;
@@ -44,7 +46,7 @@ namespace Elevator
 
         public void addPerson(Person p)
         {
-            if (lifterList.Count < 12) { lifterList.Add(p);  }
+            if (lifterList.Count < 5) { lifterList.Add(p); }
         }
 
 
@@ -52,59 +54,119 @@ namespace Elevator
         {
             while (alive)
             {
+                if (callingFloor == floor) canCall = true;
                 if (doorClosed)
                 {
-                    if(lifterList.Count > 0)
-                    {
 
-                        direction = newDirection();
-                        switch (direction)
-                        {
-                            case Direction.Up:
-                                nextStop = lifterList.Min(x => x.nextFloor);
-                                Thread.Sleep(2000);
-                                floor++;
-                                parentForm.moveElevator(floor);
-                                break;
-                            case Direction.Down:
-                                nextStop = lifterList.Max(x => x.nextFloor);
-                                Thread.Sleep(2000);
-                                floor--;
-                                parentForm.moveElevator(floor);
-                                break;
-                            case Direction.Stop:
-                                nextStop = floor;
-                                parentForm.moveElevator(floor);
-                                doorClosed = false;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    else
-                    {
+                    direction = newDirection();
 
+                    switch (direction)
+                    {
+                        case Direction.Up:
+                            previousDirection = direction;
+                            Thread.Sleep(400);
+                            floor++;
+                            parentForm.moveElevator(floor);
+                            checkFloor(floor);
+                            break;
+                        case Direction.Down:
+                            previousDirection = direction;
+                            Thread.Sleep(400);
+                            floor--;
+                            parentForm.moveElevator(floor);
+                            checkFloor(floor);
+                            break;
+                        case Direction.Stop:
+                            doorClosed = false;
+                            break;
+                        default:
+                            break;
                     }
                 }
-                Thread.Sleep(10);
+                
+                Thread.Sleep(5);
+            }
+        }
+
+        private void checkFloor(int lvl)
+        {
+            switch (lvl)
+            {
+                case 0:
+                    if (building.floor0List.Count > 0) { doorClosed = false; }
+                    break;
+
+                case 1:
+                    foreach (Person p in building.floor1List)
+                        if (p.inQueue && (p.direction == previousDirection || lifterList.Count == 0)) doorClosed = false;
+                    break;
+
+                case 2:
+                    foreach (Person p in building.floor2List)
+                        if (p.inQueue && (p.direction == previousDirection || lifterList.Count == 0)) doorClosed = false;
+                    break;
+
+                case 3:
+                    foreach (Person p in building.floor3List)
+                        if (p.inQueue && (p.direction == previousDirection || lifterList.Count == 0)) doorClosed = false;
+                    break;
+
+                case 4:
+                    foreach (Person p in building.floor4List)
+                        if (p.inQueue && (p.direction == previousDirection || lifterList.Count == 0)) doorClosed = false;
+                    break;
+
+                case 5:
+                    foreach (Person p in building.floor5List)
+                        if (p.inQueue && (p.direction == previousDirection || lifterList.Count == 0)) doorClosed = false;
+                    break;
+
+                case 6:
+                    if (building.floor6List.Count > 0) {  doorClosed = false; }
+                    break;
+
+                default:
+                    break;
             }
         }
 
         public void callElevator(int callingFloor)
         {
-
+            if (canCall)
+            {
+                this.callingFloor = callingFloor;
+                canCall = false;
+            }
+            if (callingFloor == floor) canCall = true;
         }
 
         private Direction newDirection()
         {
-            foreach(Person p in lifterList)
+            if (lifterList.Count > 0)
             {
-                if (p.nextFloor == floor) return Direction.Stop;
+                foreach (Person p in lifterList)
+                {
+                    if (p.nextFloor == floor) {  return Direction.Stop; }
+                }
+
+                switch (previousDirection)
+                {
+                    case Direction.Up:
+                        if (floor - lifterList.Max(x => x.nextFloor) > 0) return Direction.Down;
+                        else return Direction.Up;
+                    case Direction.Down:
+                        if (floor - lifterList.Min(x => x.nextFloor) > 0) return Direction.Down;
+                        else return Direction.Up;
+                    default:
+                        return Direction.Stop;
+                }
             }
-            if (floor - lifterList.Max(x => x.nextFloor) > 0) { nextDirection = Direction.Down; }
-            else nextDirection = Direction.Up;
-            if (floor - lifterList.Min(x => x.nextFloor) > 0) return Direction.Down;
-            else if (floor - lifterList.Min(x => x.nextFloor) < 0) return Direction.Up;
+            else if(!canCall)
+            {
+                if (floor - callingFloor > 0) { return Direction.Down; }
+                else if (floor - callingFloor < 0) {  return Direction.Up; }
+                else return Direction.Stop;
+            }
             else return Direction.Stop;
         }
         

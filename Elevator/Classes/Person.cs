@@ -18,9 +18,9 @@ namespace Elevator
         public bool finished = false, inQueue;
         public Direction direction;
         private Thread personRunner;
-        private static bool first = true;
         private Lifter lifter;
         private frmMain parentForm;
+        private bool inElevator = false;
 
         public Person(int maxFloor,int ID, Lifter lifter, frmMain parent)
         {
@@ -41,13 +41,34 @@ namespace Elevator
 
         public override string ToString()
         {
-            return String.Format("{0} {1} {2} {3} {4} {5} {6} {7}",
-                "ID:", ID,
-                " NF:", nextFloor,
-                " CF:", floor,
-                " Q:", inQueue);
+            if (ID < 10)
+            {
+                if (inQueue) return String.Format("{0} {1} {2} ",
+                  "p0" + ID,
+                  "  calling", direction.ToString());
+                else if (inElevator) return String.Format("{0} {1} {2}",
+                "p0" + ID, " [ NF:", nextFloor + " ]");
+                else return String.Format("{0}",
+                 "p0" + ID);
+            }
 
 
+            else
+            {
+                if (inQueue) return String.Format("{0} {1} {2} ",
+                 "p" + ID,
+                 "  calling", direction.ToString());
+                else if (inElevator) return String.Format("{0} {1} {2}",
+                "p" + ID, " [ NF:", nextFloor + " ]");
+                else return String.Format("{0}",
+                 "p" + ID);
+            } 
+        }
+
+        public void Reset()
+        {
+            finished = true;
+            inQueue = false;
         }
 
         private void runner()
@@ -56,8 +77,8 @@ namespace Elevator
             {
                 if (nextFloor != floor)
                 {
-                    inQueue = true;
-                    Thread.Sleep(10);
+                    inQueue = !inElevator;
+                    lifter.callElevator(floor);
                 }
                 else
                 {
@@ -65,21 +86,28 @@ namespace Elevator
                     if (nextFloor == 0)
                     {
                         finished = true;
-                        waitOnFloor = 10;
+                        waitOnFloor = 1;
                     }
                     else
                     {
                         while (nextFloor == floor) nextFloor = getRandomNumber(0, maxFloor + 1);
                         if (floor - nextFloor > 0) direction = Direction.Down;
                         else direction = Direction.Up;
-                        waitOnFloor = getRandomNumber(1000, 10000);
+                        waitOnFloor = getRandomNumber(10000, 120000);
                     }
                     Thread.Sleep(waitOnFloor);
-                    lifter.callElevator(floor);
                 }
+
+                Thread.Sleep(10);
             }
         }
-
+        
+        public void setFloor(int floor, bool inElevator)
+        {
+            this.floor = floor;
+            this.inElevator = inElevator;
+            inQueue = false;
+        }
 
         private int getRandomNumber(int start, int end)
         {

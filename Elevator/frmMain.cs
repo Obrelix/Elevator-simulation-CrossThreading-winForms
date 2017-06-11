@@ -12,28 +12,19 @@ namespace Elevator
 {
     public partial class frmMain : Form
     {
-        List<Person> pList = new List<Person>();
-        Lifter lifter;
         private int floor = 0;
         Building building;
+
         public frmMain()
         {
             InitializeComponent();
-            lifter  = new Lifter(this);
         }
 
         private void frmMain_Load(object sender, EventArgs e)
         {
             building = new Building(this);
-            //for(int i = 0; i < 150; i++)
-            //{
-            //    pList.Add(new Person(6, i + 1, lifter));
-            //}
-            //lsbElevator.BeginUpdate();
-            //lsbElevator.DataSource = null;
-            //lsbElevator.DataSource = pList;
-            //lsbElevator.EndUpdate();
 
+            lblFloor.Location = new Point(237 + (lsbElevator.Width - lblFloor.Width) / 2, 460 - 10);
         }
 
         public void moveElevator(int floor)
@@ -48,24 +39,38 @@ namespace Elevator
             {
                 case 0:
                     lsbElevator.Location = new Point(237, 460);
+                    lblFloor.Location = new Point(237 + (lsbElevator.Width - lblFloor.Width) / 2, 460 - 10);
+                    lblFloor.Text = floor.ToString();
                     break;
                 case 1:
                     lsbElevator.Location = new Point(237, 385);
+                    lblFloor.Location = new Point(237 + (lsbElevator.Width - lblFloor.Width) / 2, 385 - 10);
+                    lblFloor.Text = floor.ToString();
                     break;
                 case 2:
                     lsbElevator.Location = new Point(237, 310);
+                    lblFloor.Location = new Point(237 + (lsbElevator.Width - lblFloor.Width) / 2, 310 - 10);
+                    lblFloor.Text = floor.ToString();
                     break;
                 case 3:
                     lsbElevator.Location = new Point(237, 235);
+                    lblFloor.Location = new Point(237 + (lsbElevator.Width - lblFloor.Width) / 2, 235 - 10);
+                    lblFloor.Text = floor.ToString();
                     break;
                 case 4:
                     lsbElevator.Location = new Point(237, 160);
+                    lblFloor.Location = new Point(237 + (lsbElevator.Width - lblFloor.Width) / 2, 160 - 10);
+                    lblFloor.Text = floor.ToString();
                     break;
                 case 5:
                     lsbElevator.Location = new Point(237, 85);
+                    lblFloor.Location = new Point(237 + (lsbElevator.Width - lblFloor.Width) / 2, 85 - 10);
+                    lblFloor.Text = floor.ToString();
                     break;
                 case 6:
                     lsbElevator.Location = new Point(237, 10);
+                    lblFloor.Location = new Point(237 + (lsbElevator.Width - lblFloor.Width) / 2, 10 - 10);
+                    lblFloor.Text = floor.ToString();
                     break;
                 default:
                     break;
@@ -83,6 +88,19 @@ namespace Elevator
             lsbElevator.DataSource = null;
             lsbElevator.DataSource = pList;
             lsbElevator.EndUpdate();
+        }
+
+        public void updateExit(List<Person> pList)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<List<Person>>(updateExit), new object[] { pList });
+                return;
+            }
+            lsbExit.BeginUpdate();
+            lsbExit.DataSource = null;
+            lsbExit.DataSource = pList;
+            lsbExit.EndUpdate();
         }
 
         public void updateFloors(List<Person> pList , int floor)
