@@ -1,0 +1,2 @@
+c:\users\tataki\documents\visual studio 2015\Projects\Elevator\Elevator\bin\Debug\Elevator.exe.config
+C:\Users\tataki\Source\Repos\Elevator-simulation-CrossThreading-winForms\Elevator\bin\Debug\Elevator.exe.config
