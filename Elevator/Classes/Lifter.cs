@@ -62,16 +62,19 @@ namespace Elevator
                         {
                             case Direction.Up:
                                 nextStop = lifterList.Min(x => x.nextFloor);
-                                Thread.Sleep(1000);
+                                Thread.Sleep(2000);
                                 floor++;
+                                parentForm.moveElevator(floor);
                                 break;
                             case Direction.Down:
                                 nextStop = lifterList.Max(x => x.nextFloor);
-                                Thread.Sleep(1000);
+                                Thread.Sleep(2000);
                                 floor--;
+                                parentForm.moveElevator(floor);
                                 break;
                             case Direction.Stop:
                                 nextStop = floor;
+                                parentForm.moveElevator(floor);
                                 doorClosed = false;
                                 break;
                             default:

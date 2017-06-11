@@ -20,9 +20,11 @@ namespace Elevator
         private Thread personRunner;
         private static bool first = true;
         private Lifter lifter;
+        private frmMain parentForm;
 
-        public Person(int maxFloor,int ID, Lifter lifter)
+        public Person(int maxFloor,int ID, Lifter lifter, frmMain parent)
         {
+            parentForm = parent;
             this.ID =  ID;
             this.lifter = lifter;
             floor = 0;
@@ -67,7 +69,7 @@ namespace Elevator
                     }
                     else
                     {
-                        while (nextFloor != floor) nextFloor = getRandomNumber(0, maxFloor + 1);
+                        while (nextFloor == floor) nextFloor = getRandomNumber(0, maxFloor + 1);
                         if (floor - nextFloor > 0) direction = Direction.Down;
                         else direction = Direction.Up;
                         waitOnFloor = getRandomNumber(1000, 10000);

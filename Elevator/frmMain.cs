@@ -15,7 +15,7 @@ namespace Elevator
         List<Person> pList = new List<Person>();
         Lifter lifter;
         private int floor = 0;
-
+        Building building;
         public frmMain()
         {
             InitializeComponent();
@@ -24,15 +24,15 @@ namespace Elevator
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-
-            for(int i = 0; i < 150; i++)
-            {
-                pList.Add(new Person(6, i + 1, lifter));
-            }
-            lsbElevator.BeginUpdate();
-            lsbElevator.DataSource = null;
-            lsbElevator.DataSource = pList;
-            lsbElevator.EndUpdate();
+            building = new Building(this);
+            //for(int i = 0; i < 150; i++)
+            //{
+            //    pList.Add(new Person(6, i + 1, lifter));
+            //}
+            //lsbElevator.BeginUpdate();
+            //lsbElevator.DataSource = null;
+            //lsbElevator.DataSource = pList;
+            //lsbElevator.EndUpdate();
 
         }
 

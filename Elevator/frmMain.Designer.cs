@@ -52,54 +52,54 @@
             // 
             this.lsb0Floor.BackColor = System.Drawing.Color.OliveDrab;
             this.lsb0Floor.FormattingEnabled = true;
-            this.lsb0Floor.Location = new System.Drawing.Point(23, 460);
+            this.lsb0Floor.Location = new System.Drawing.Point(12, 460);
             this.lsb0Floor.Name = "lsb0Floor";
-            this.lsb0Floor.Size = new System.Drawing.Size(206, 69);
+            this.lsb0Floor.Size = new System.Drawing.Size(217, 69);
             this.lsb0Floor.TabIndex = 0;
             // 
             // lsb1Floor
             // 
             this.lsb1Floor.BackColor = System.Drawing.Color.OliveDrab;
             this.lsb1Floor.FormattingEnabled = true;
-            this.lsb1Floor.Location = new System.Drawing.Point(23, 385);
+            this.lsb1Floor.Location = new System.Drawing.Point(12, 385);
             this.lsb1Floor.Name = "lsb1Floor";
-            this.lsb1Floor.Size = new System.Drawing.Size(206, 69);
+            this.lsb1Floor.Size = new System.Drawing.Size(217, 69);
             this.lsb1Floor.TabIndex = 0;
             // 
             // lsb2Floor
             // 
             this.lsb2Floor.BackColor = System.Drawing.Color.OliveDrab;
             this.lsb2Floor.FormattingEnabled = true;
-            this.lsb2Floor.Location = new System.Drawing.Point(23, 310);
+            this.lsb2Floor.Location = new System.Drawing.Point(12, 310);
             this.lsb2Floor.Name = "lsb2Floor";
-            this.lsb2Floor.Size = new System.Drawing.Size(206, 69);
+            this.lsb2Floor.Size = new System.Drawing.Size(217, 69);
             this.lsb2Floor.TabIndex = 0;
             // 
             // lsb3Floor
             // 
             this.lsb3Floor.BackColor = System.Drawing.Color.OliveDrab;
             this.lsb3Floor.FormattingEnabled = true;
-            this.lsb3Floor.Location = new System.Drawing.Point(23, 235);
+            this.lsb3Floor.Location = new System.Drawing.Point(12, 235);
             this.lsb3Floor.Name = "lsb3Floor";
-            this.lsb3Floor.Size = new System.Drawing.Size(206, 69);
+            this.lsb3Floor.Size = new System.Drawing.Size(217, 69);
             this.lsb3Floor.TabIndex = 0;
             // 
             // lsb4Floor
             // 
             this.lsb4Floor.BackColor = System.Drawing.Color.OliveDrab;
             this.lsb4Floor.FormattingEnabled = true;
-            this.lsb4Floor.Location = new System.Drawing.Point(23, 160);
+            this.lsb4Floor.Location = new System.Drawing.Point(12, 160);
             this.lsb4Floor.Name = "lsb4Floor";
-            this.lsb4Floor.Size = new System.Drawing.Size(206, 69);
+            this.lsb4Floor.Size = new System.Drawing.Size(217, 69);
             this.lsb4Floor.TabIndex = 0;
             // 
             // lsb5Floor
             // 
             this.lsb5Floor.BackColor = System.Drawing.Color.OliveDrab;
             this.lsb5Floor.FormattingEnabled = true;
-            this.lsb5Floor.Location = new System.Drawing.Point(23, 85);
+            this.lsb5Floor.Location = new System.Drawing.Point(12, 85);
             this.lsb5Floor.Name = "lsb5Floor";
-            this.lsb5Floor.Size = new System.Drawing.Size(206, 69);
+            this.lsb5Floor.Size = new System.Drawing.Size(217, 69);
             this.lsb5Floor.TabIndex = 0;
             // 
             // lsbElevator
@@ -116,9 +116,9 @@
             // 
             this.lsb6Floor.BackColor = System.Drawing.Color.OliveDrab;
             this.lsb6Floor.FormattingEnabled = true;
-            this.lsb6Floor.Location = new System.Drawing.Point(23, 10);
+            this.lsb6Floor.Location = new System.Drawing.Point(12, 10);
             this.lsb6Floor.Name = "lsb6Floor";
-            this.lsb6Floor.Size = new System.Drawing.Size(206, 69);
+            this.lsb6Floor.Size = new System.Drawing.Size(217, 69);
             this.lsb6Floor.TabIndex = 0;
             // 
             // label1
@@ -232,7 +232,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.AppWorkspace;
-            this.ClientSize = new System.Drawing.Size(434, 572);
+            this.ClientSize = new System.Drawing.Size(408, 572);
             this.Controls.Add(this.lblFloor);
             this.Controls.Add(this.btnDown);
             this.Controls.Add(this.btnUp);
