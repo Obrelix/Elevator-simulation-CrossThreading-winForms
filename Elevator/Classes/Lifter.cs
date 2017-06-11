@@ -27,9 +27,11 @@ namespace Elevator
 
         public bool alive { get; set; }
         public bool doorClosed { get; set; }
+        private frmMain parentForm;
 
-        public Lifter()
+        public Lifter(frmMain parentForm)
         {
+            this.parentForm = parentForm;
             alive = true;
             doorClosed = false;
             floor = 0;

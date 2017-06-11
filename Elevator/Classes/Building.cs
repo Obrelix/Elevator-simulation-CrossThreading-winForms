@@ -43,11 +43,13 @@ namespace Elevator
         private Thread Runner;
         private int maxPeople = 6;
         public Lifter lifter;
+        private frmMain parentForm;
 
-        public Building()
+        public Building(frmMain Form)
         {
-            lifter = new Lifter();
-            for (int i = 0; i < maxPeople; i++) floor0List.Add(new Person(maxFloor, i + 1));
+            this.parentForm = Form;
+            lifter = new Lifter(parentForm);
+            for (int i = 0; i < maxPeople; i++) floor0List.Add(new Person(maxFloor, i + 1, lifter));
             Runner = new Thread(new ThreadStart(update));
             Runner.IsBackground = true;
             Runner.Start();

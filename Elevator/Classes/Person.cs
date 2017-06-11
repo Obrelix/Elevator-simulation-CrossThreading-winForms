@@ -35,7 +35,19 @@ namespace Elevator
             personRunner.IsBackground = true;
             personRunner.Start();
         }
-        
+
+
+        public override string ToString()
+        {
+            return String.Format("{0} {1} {2} {3} {4} {5} {6} {7}",
+                "ID:", ID,
+                " NF:", nextFloor,
+                " CF:", floor,
+                " Q:", inQueue);
+
+
+        }
+
         private void runner()
         {
             while (!finished)
@@ -61,6 +73,7 @@ namespace Elevator
                         waitOnFloor = getRandomNumber(1000, 10000);
                     }
                     Thread.Sleep(waitOnFloor);
+                    lifter.callElevator(floor);
                 }
             }
         }
